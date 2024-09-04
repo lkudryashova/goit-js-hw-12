@@ -40,9 +40,9 @@ const onFormSubmit = async event => {
     currentPage = 1;
     const response = await searchImagesByQuery(currentQuery, currentPage);
     const data = response.data;
-    if (data.total === 0) {
+    if (!data.hits || data.hits.length === 0) {
       iziToast.error({
-        position: 'topRight',
+        position: 'bottomRight',
         message:
           'Sorry, there are no images matching your search query. Please try again!',
       });
@@ -88,9 +88,9 @@ const onLoadMoreBtnClick = async event => {
       .join('');
     galleryList.insertAdjacentHTML('beforeend', galleryCardTemplate);
     simpleLightbox.refresh();
-
-    const { height: cardHeight } = galleryElement.getBoundingClientRect();
-    scrollBy({
+    const { height: cardHeight } =
+      galleryList.firstElementChild.getBoundingClientRect();
+    window.scrollBy({
       top: cardHeight * 2,
       behavior: 'smooth',
     });
@@ -100,7 +100,7 @@ const onLoadMoreBtnClick = async event => {
     if (Math.ceil(data.totalHits / 15) === currentPage) {
       iziToast.show({
         message: "We're sorry, but you've reached the end of search results.",
-        position: 'topRight',
+        position: 'bottomRight',
       });
       loader.classList.add('hidden');
       loadMoreBtn.classList.add('hidden');
